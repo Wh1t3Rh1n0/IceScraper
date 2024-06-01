@@ -12,10 +12,12 @@ output_dir = r''
 
 ### End of user-defined settings ##############################################
 
+
+import os
+
 if not messageIsRequest:
 
     if output_dir == '':
-        import os
         if 'USERPROFILE' in os.environ.keys():
             output_dir = os.environ['USERPROFILE'] + os.sep + 'Desktop'
         else:
