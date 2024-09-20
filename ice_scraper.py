@@ -79,6 +79,10 @@ if not messageIsRequest:
 
                 output = '"' + name + '","' + title + '","' + company + '"'
                 print output
+
+                if type(output) == type(u''):
+                    output = str(output.encode())
+
                 f.write(output + "\n")
 
             f.close()
@@ -103,39 +107,57 @@ if not messageIsRequest:
 
             f = open(zoominfo_output_file, 'a')
 
-            for hit in re.findall('columnName:Contact Name.*', txt):
+            debug_zoom=0
+
+            for hit in re.findall('"columnName":"Contact Name".*', txt):
+                if debug_zoom: print "-----"
+                if debug_zoom: print hit
                 output = '"'
 
-                name = re.findall('fullName:[^:]+,displayName:', hit)
-                if len(name) > 0: output += name[0].split('fullName:')[1].split(',displayName')[0]
+                name = re.findall('fullName":[^:]+,"displayName', hit)
+                if debug_zoom: print name
+                if len(name) > 0: output += name[0].split('fullName":"')[1].split('","displayName')[0]
 
                 output += '","'
+                if debug_zoom: print output
 
-                company = re.findall('companyName:[^:]+,companyId:', hit)
-                if len(company) > 0: output += company[0].split('companyName:')[1].split(',companyId')[0]
-
-                output += '","'
-
-                title = re.findall('jobTitle:[^:]+\},\{columnName:', hit)
-                if len(title) > 0: output += title[0].split('jobTitle:')[1].split('},{columnName')[0]
+                company = re.findall('companyName":[^:]+,"companyId', hit)
+                if len(company) > 0: output += company[0].split('companyName":"')[1].split('","companyId')[0]
 
                 output += '","'
+                if debug_zoom: print output
 
-                country = re.findall('country:\{name:[^:]+,link:/', hit)
-                if len(country) > 0: output += country[0].split('name:')[1].split(',link:')[0]
-
-                output += '","'
-
-                state = re.findall(',state:\{name:[^:]+,link:/', hit)
-                if len(state) > 0: output += state[0].split('name:')[1].split(',link:')[0]
+                title = re.findall('"Job Title"[^}]+"text":"[^"]+', hit)
+                if debug_zoom: print title
+                if len(title) > 0: output += title[0].split('"')[-1]
 
                 output += '","'
+                if debug_zoom: print output
 
-                city = re.findall(',city:\{name:[^:]+,link:/', hit)
-                if len(city) > 0: output += city[0].split('name:')[1].split(',link:')[0]
+                country = re.findall('country":\{"name":"[^"]+","link', hit)
+                if debug_zoom: print country
+                if len(country) > 0: output += country[0].split('"name":"')[1].split('","link')[0]
+
+                output += '","'
+                if debug_zoom: print output
+
+                state = re.findall(',"state":\{"name":[^:]+,"link', hit)
+                if debug_zoom: print state
+                if len(state) > 0: output += state[0].split('"name":"')[1].split('","link')[0]
+
+                output += '","'
+                if debug_zoom: print output
+
+                city = re.findall(',"city":\{"name":[^:]+,"link', hit)
+                if debug_zoom: print city
+                if len(city) > 0: output += city[0].split('"name":"')[1].split('","link')[0]
                 
                 output += '"'
                 print output
+
+                if type(output) == type(u''):
+                    output = str(output.encode())
+
                 f.write(output + "\n")
 
             f.close()
@@ -176,8 +198,13 @@ if not messageIsRequest:
 
                             output_data = '"%s","%s","%s", "%s"' % (name, title, location, profile_url)
 
+                            if type(output_data) == type(u''):
+                                output_data = str(output_data.encode())
+
+
                             with open(authed_LI_output_file, 'a') as _f:
                                 _f.write(output_data + "\n")
                                 
                             print output_data
 
+  
