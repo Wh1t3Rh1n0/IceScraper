@@ -61,14 +61,16 @@ if not messageIsRequest:
             txt = re.sub('\&amp;?',' ',txt)
             txt = re.sub('\&#39;?',"'",txt)
 
-            x = re.findall('<h3 class="[^"]+">[^<]+ - [^<]+</h3>', txt)
+            pattern = re.compile(
+                r'<h3[^>]*class="[^"]*"[^>]*id="[^"]*"[^>]*>(.*?)<\/h3>',
+                re.DOTALL | re.IGNORECASE
+            )
+            x = [re.sub(r'\s+', ' ', match.strip()) for match in pattern.findall(txt)]
 
             f = open(linkedin_output_file, 'a')
 
             for hit in x:
-                inner = hit.split('>')[1].split('<')[0] 
-                
-                decoded = inner.replace('&amp;','&')
+                decoded = hit
                 # print decoded
                 split = decoded.split(' - ')
                 name = split[0]
