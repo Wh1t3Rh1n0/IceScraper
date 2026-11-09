@@ -79,6 +79,19 @@ This scraping method scrapes employee names and titles from the People section o
 
 ![](assets/linkedin_auth.png)
 
+**Output format:** each line of `scraper-linkedin_auth.csv` contains the following columns:
+
+```
+"Name","Title","Connection degree","Profile URL"
+"Jane Doe","CFO at Example Corp","3rd","https://www.linkedin.com/in/jane-doe-1a2b3c4d/"
+```
+
+**Notes:**
+
+- LinkedIn's People page now uses its server-driven UI: results come from `/flagship-web/...` requests as a React Server Components stream (`application/octet-stream`) instead of the older voyager GraphQL API. Ice Scraper detects these responses automatically. Open the People page by clicking the "People" link (step 4) rather than loading the URL directly, as direct page loads have not been tested.
+- For people outside your network, LinkedIn may abbreviate the last name (e.g. `Jane D.`). When the profile URL contains the full last name (e.g. `/in/jane-doe/`), Ice Scraper expands it automatically (`Jane Doe`). Only the first last-name token is used, and it is capitalized from the lowercase URL (e.g. `Macdonald`, not `MacDonald`).
+- People hidden as `LinkedIn Member` are still logged with their title, but without a name or profile URL.
+
 
 ### Scraping ZoomInfo (Unauthenticated)
 
